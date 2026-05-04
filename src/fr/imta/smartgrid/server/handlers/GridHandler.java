@@ -28,4 +28,5 @@ public class GridHandler {
             ctx.json(g.toJSON());
         }
     }
+    
 }
