@@ -35,10 +35,10 @@ public class Person {
     private List<Sensor> sensors = new ArrayList<>();
 
     public JsonObject toJSON() {
-        JsonObject res = new JsonObject()
-                .put("id", this.id)
-                .put("first_Name", this.firstName)
-                .put("last_Name", this.lastName);
+        JsonObject res = new JsonObject();
+        res.put("id", this.id);
+        res.put("first_Name", this.firstName);
+        res.put("last_Name", this.lastName);
 
             if (this.grid != null) {
                 res.put("grid", this.grid.getId());
