@@ -33,7 +33,9 @@ public class Grid {
         return new JsonObject()
             .put("id", this.id)
             .put("name", this.name)
-            .put("description", this.description);
+            .put("description", this.description)
+            .put("sensors", this.sensors)
+            .put("users", this.persons);
     }
 
     public int getId() {
