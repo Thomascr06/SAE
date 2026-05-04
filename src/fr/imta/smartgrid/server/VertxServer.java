@@ -48,6 +48,7 @@ public class VertxServer {
 
         PersonHandler ph = new PersonHandler(db);
         router.get("/persons").handler(ph::getPersons);
+        router.get("/person/:id").handler(ph::getPersonById);
         // same as GridHandler
 
         // do the same for other routes
