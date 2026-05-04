@@ -1,5 +1,6 @@
 package fr.imta.smartgrid.model;
 
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 import java.util.ArrayList;
@@ -34,8 +35,21 @@ public class Person {
     private List<Sensor> sensors = new ArrayList<>();
 
     public JsonObject toJSON() {
-        return new JsonObject()
-                .put("id", this.id);
+        JsonObject res = new JsonObject()
+                .put("id", this.id)
+                .put("first_Name", this.firstName)
+                .put("last_Name", this.lastName);
+
+            if (this.grid != null) {
+                res.put("grid", this.grid.getId());
+            }
+            if (this.sensors != null) {
+                res.put("owned_sensors", new JsonArray(this.sensors.stream().map(Sensor::getId).toList()));
+            }
+            else {
+                res.put("owned_sensors", new JsonArray());
+            }
+            return res;
     }
 
     public int getId() {
