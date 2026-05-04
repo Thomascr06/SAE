@@ -1,5 +1,7 @@
 package fr.imta.smartgrid.model;
 
+import io.vertx.core.json.JsonObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,9 +30,13 @@ public class Person {
     private Grid grid;
 
     @ManyToMany
-    @JoinTable(
-            name = "person_sensor", joinColumns = @JoinColumn(name = "person_id"), inverseJoinColumns = @JoinColumn(name = "sensor_id"))
+    @JoinTable(name = "person_sensor", joinColumns = @JoinColumn(name = "person_id"), inverseJoinColumns = @JoinColumn(name = "sensor_id"))
     private List<Sensor> sensors = new ArrayList<>();
+
+    public JsonObject toJSON() {
+        return new JsonObject()
+                .put("id", this.id);
+    }
 
     public int getId() {
         return id;
@@ -72,5 +78,4 @@ public class Person {
         this.sensors = sensors;
     }
 
-    
 }

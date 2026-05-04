@@ -3,6 +3,7 @@ package fr.imta.smartgrid.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 import jakarta.persistence.Entity;
@@ -30,12 +31,26 @@ public class Grid {
     private List<Sensor> sensors = new ArrayList<>();
 
     public JsonObject toJSON() {
+        JsonArray sensorsJson = new JsonArray();
+        if (this.sensors != null) {
+            for (Sensor s : this.sensors) {
+                sensorsJson.add(s.getId());
+            }
+        }
+
+        JsonArray personsJson = new JsonArray();
+        if (this.persons != null) {
+            for (Person p : this.persons) {
+                personsJson.add(p.getId());
+            }
+        }
+
         return new JsonObject()
-            .put("id", this.id)
-            .put("name", this.name)
-            .put("description", this.description)
-            .put("sensors", this.sensors)
-            .put("users", this.persons);
+                .put("id", this.id)
+                .put("name", this.name)
+                .put("description", this.description)
+                .put("sensors", sensorsJson)
+                .put("users", personsJson);
     }
 
     public int getId() {

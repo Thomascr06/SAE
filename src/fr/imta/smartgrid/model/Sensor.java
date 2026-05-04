@@ -40,9 +40,9 @@ public abstract class Sensor {
 
     public JsonObject toJSON() {
         JsonObject res = new JsonObject();
-
-        // TODO
-
+        res.put("id", this.id);
+        res.put("name", this.name);
+        res.put("description", this.description);
         return res;
     }
 
