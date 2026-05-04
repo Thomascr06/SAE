@@ -3,6 +3,8 @@ package fr.imta.smartgrid.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.vertx.core.json.JsonObject;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,6 +28,13 @@ public class Grid {
 
     @OneToMany(mappedBy = "grid")
     private List<Sensor> sensors = new ArrayList<>();
+
+    public JsonObject toJSON() {
+        return new JsonObject()
+            .put("id", this.id)
+            .put("name", this.name)
+            .put("description", this.description);
+    }
 
     public int getId() {
         return id;
@@ -67,6 +76,4 @@ public class Grid {
         this.sensors = sensors;
     }
 
-
-    
 }
