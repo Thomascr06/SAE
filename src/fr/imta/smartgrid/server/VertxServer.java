@@ -55,6 +55,7 @@ public class VertxServer {
         router.get("/persons").handler(ph::getPersons);
         router.get("/person/:id").handler(ph::getPersonById);
         router.put("/person").handler(ph::createPerson);
+        router.delete("/person/:id").handler(ph::deletePerson);
         // same as GridHandler
 
         MeasurementHandler mh = new MeasurementHandler(db);

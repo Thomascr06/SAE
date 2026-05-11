@@ -70,4 +70,25 @@ public class PersonHandler {
         JsonObject response = new JsonObject().put("id", p.getId());
         ctx.json(response);
     }
+
+    public void deletePerson(RoutingContext ctx) {
+        this.db.getTransaction().begin();
+        Person p = db.find(Person.class, Integer.parseInt(ctx.pathParam("id")));
+        if (p == null) {
+            this.db.getTransaction().rollback();
+            ctx.response().setStatusCode(404);
+            ctx.json("Person not found");
+            return;
+        }
+
+        try {
+            db.remove(p);
+            this.db.getTransaction().commit();
+            ctx.json("Deleted successfully");
+        } catch (Exception e) {
+            this.db.getTransaction().rollback();
+            ctx.response().setStatusCode(500);
+            ctx.json("Error during deletion");
+        }
+    }
 }
