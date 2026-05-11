@@ -4,6 +4,8 @@ import java.util.List;
 
 import fr.imta.smartgrid.model.Grid;
 import fr.imta.smartgrid.model.Person;
+import fr.imta.smartgrid.model.Sensor;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 import jakarta.persistence.EntityManager;
 
@@ -19,6 +21,7 @@ public class PersonHandler {
 
         ctx.json(persons);
     }
+
     public void getPersonById(RoutingContext ctx) {
         Person g = db.find(Person.class, Integer.parseInt(ctx.pathParam("id")));
         if (g == null) {
@@ -26,5 +29,45 @@ public class PersonHandler {
         } else {
             ctx.json(g.toJSON());
         }
+    }
+
+    public void createPerson(RoutingContext ctx) {
+        JsonObject body = ctx.body().asJsonObject();
+        String firstName = body.getString("first_name");
+        String lastName = body.getString("last_name");
+
+        if (firstName == null || firstName.trim().isEmpty()) {
+            ctx.response().setStatusCode(500);
+            ctx.json("Missing first_name");
+            return;
+        }
+
+        if (lastName == null || lastName.trim().isEmpty()) {
+            ctx.response().setStatusCode(500);
+            ctx.json("Missing last_name");
+            return;
+        }
+
+        this.db.getTransaction().begin();
+        Person p = new Person();
+        p.setFirstName(firstName);
+        p.setLastName(lastName);
+
+        Integer gridId = body.getInteger("grid");
+        if (gridId != null) {
+            Grid grid = this.db.find(Grid.class, gridId);
+            if (grid != null) {
+                p.setGrid(grid);
+            } else {
+                ctx.fail(404);
+                this.db.getTransaction().rollback();
+                return;
+            }
+        }
+
+        this.db.persist(p);
+        this.db.getTransaction().commit();
+        JsonObject response = new JsonObject().put("id", p.getId());
+        ctx.json(response);
     }
 }

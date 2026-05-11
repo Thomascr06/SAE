@@ -7,6 +7,9 @@ import org.eclipse.persistence.logging.SessionLog;
 import fr.imta.smartgrid.server.handlers.GridHandler;
 import fr.imta.smartgrid.server.handlers.PersonHandler;
 import fr.imta.smartgrid.server.handlers.MeasurementHandler;
+import fr.imta.smartgrid.model.Person;
+import fr.imta.smartgrid.model.Grid;
+import fr.imta.smartgrid.model.Sensor;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.Router;
@@ -51,6 +54,7 @@ public class VertxServer {
         PersonHandler ph = new PersonHandler(db);
         router.get("/persons").handler(ph::getPersons);
         router.get("/person/:id").handler(ph::getPersonById);
+        router.put("/person").handler(ph::createPerson);
         // same as GridHandler
 
         MeasurementHandler mh = new MeasurementHandler(db);
