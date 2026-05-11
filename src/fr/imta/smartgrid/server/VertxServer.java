@@ -6,6 +6,7 @@ import org.eclipse.persistence.logging.SessionLog;
 
 import fr.imta.smartgrid.server.handlers.GridHandler;
 import fr.imta.smartgrid.server.handlers.PersonHandler;
+import fr.imta.smartgrid.server.handlers.MeasurementHandler;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.Router;
@@ -25,7 +26,7 @@ public class VertxServer {
 
         // setup database connexion
         Map<String, String> properties = Map.of(
-            LOGGING_LEVEL, SessionLog.WARNING_LABEL // change to FINE_LABEL to get details on SQL query to database
+                LOGGING_LEVEL, SessionLog.WARNING_LABEL // change to FINE_LABEL to get details on SQL query to database
         );
 
         var emf = Persistence.createEntityManagerFactory("smart-grid", properties);
@@ -37,13 +38,14 @@ public class VertxServer {
 
         // add handlers for payload parsing and to allow swagger to send requests
         router.route().handler(BodyHandler.create());
-        router.route().handler(CorsHandler.create().addOrigin("*").allowedMethod(HttpMethod.DELETE).allowedMethod(HttpMethod.PUT));
+        router.route().handler(
+                CorsHandler.create().addOrigin("*").allowedMethod(HttpMethod.DELETE).allowedMethod(HttpMethod.PUT));
 
         // create handlers and registers routes
         GridHandler gh = new GridHandler(db);
         router.get("/grids").handler(gh::getIds);
         router.get("/grid/:id").handler(gh::getById);
-        
+
         // add methods to GridHandler to handle other grid related routes
 
         PersonHandler ph = new PersonHandler(db);
@@ -51,17 +53,20 @@ public class VertxServer {
         router.get("/person/:id").handler(ph::getPersonById);
         // same as GridHandler
 
+        MeasurementHandler mh = new MeasurementHandler(db);
+        router.get("/measurements").handler(mh::getMeasurements);
+        router.get("/measurement/:id").handler(mh::getMeasurementById);
+
         // do the same for other routes
         // ...
-        
+
         // start the server
         vertx.createHttpServer().requestHandler(router).listen(8080)
-            .onSuccess(e -> 
-                System.out.println("Server is listening on localhost:" + e.actualPort())
-            ).onFailure(e -> {
-                System.out.println("Cannot start server, got error: " + e.getLocalizedMessage());
-                System.exit(1);
-            });
+                .onSuccess(e -> System.out.println("Server is listening on localhost:" + e.actualPort()))
+                .onFailure(e -> {
+                    System.out.println("Cannot start server, got error: " + e.getLocalizedMessage());
+                    System.exit(1);
+                });
     }
 
     public static void main(String[] args) {
