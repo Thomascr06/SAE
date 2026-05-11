@@ -91,4 +91,28 @@ public class PersonHandler {
             ctx.json("Error during deletion");
         }
     }
+
+            public void UpdatePerson(RoutingContext ctx) {
+            try{
+                Person p = db.find(Person.class, Integer.parseInt(ctx.pathParam("id")));
+                if (p == null) {
+                    ctx.json("Person not found");
+                    return;
+                } else {
+                    JsonObject body = ctx.body().asJsonObject();
+                    if (body.containsKey("first_name")) {
+                        p.setFirstName(body.getString("first_name"));
+                    }
+                    if (body.containsKey("last_name")) {
+                        p.setLastName(body.getString("last_name"));
+                    }
+                    db.getTransaction().begin();
+                    db.merge(p);
+                    db.getTransaction().commit();
+                    ctx.json(p.toJSON());
+                }
+            } catch(Exception e){
+                ctx.fail(400, new IllegalArgumentException("JSON mal formé"));
+            }
+        }
 }

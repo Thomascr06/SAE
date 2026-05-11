@@ -42,7 +42,7 @@ public class VertxServer {
         // add handlers for payload parsing and to allow swagger to send requests
         router.route().handler(BodyHandler.create());
         router.route().handler(
-                CorsHandler.create().addOrigin("*").allowedMethod(HttpMethod.DELETE).allowedMethod(HttpMethod.PUT));
+                CorsHandler.create().addOrigin("*").allowedMethod(HttpMethod.DELETE).allowedMethod(HttpMethod.PUT).allowedMethod(HttpMethod.POST));
 
         // create handlers and registers routes
         GridHandler gh = new GridHandler(db);
@@ -56,6 +56,7 @@ public class VertxServer {
         router.get("/person/:id").handler(ph::getPersonById);
         router.put("/person").handler(ph::createPerson);
         router.delete("/person/:id").handler(ph::deletePerson);
+        router.post("/person/:id").handler(ph::UpdatePerson);
         // same as GridHandler
 
         MeasurementHandler mh = new MeasurementHandler(db);
