@@ -5,11 +5,14 @@ import java.util.Map;
 import org.eclipse.persistence.logging.SessionLog;
 
 import fr.imta.smartgrid.server.handlers.GridHandler;
+import fr.imta.smartgrid.server.handlers.SensorHandler;
 import fr.imta.smartgrid.server.handlers.PersonHandler;
 import fr.imta.smartgrid.server.handlers.MeasurementHandler;
+
 import fr.imta.smartgrid.model.Person;
 import fr.imta.smartgrid.model.Grid;
 import fr.imta.smartgrid.model.Sensor;
+
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.Router;
@@ -62,6 +65,9 @@ public class VertxServer {
         MeasurementHandler mh = new MeasurementHandler(db);
         router.get("/measurements").handler(mh::getMeasurements);
         router.get("/measurement/:id").handler(mh::getMeasurementById);
+
+        SensorHandler sh = new SensorHandler(db);
+        router.get("/sensors/:kind").handler(sh::getSensorByKind);
 
         // do the same for other routes
         // ...
