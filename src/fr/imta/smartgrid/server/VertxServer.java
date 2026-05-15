@@ -8,6 +8,7 @@ import fr.imta.smartgrid.server.handlers.GridHandler;
 import fr.imta.smartgrid.server.handlers.SensorHandler;
 import fr.imta.smartgrid.server.handlers.PersonHandler;
 import fr.imta.smartgrid.server.handlers.MeasurementHandler;
+import fr.imta.smartgrid.server.handlers.IngressHandler;
 
 import fr.imta.smartgrid.model.Person;
 import fr.imta.smartgrid.model.Grid;
@@ -68,6 +69,9 @@ public class VertxServer {
 
         SensorHandler sh = new SensorHandler(db);
         router.get("/sensors/:kind").handler(sh::getSensorByKind);
+
+        IngressHandler ih = new IngressHandler(db);
+        router.post("/ingress/windturbine").handler(ih::Receivewindturbinemeasurement);
 
         // do the same for other routes
         // ...
