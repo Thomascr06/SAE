@@ -2,10 +2,16 @@ package fr.imta.smartgrid.server.handlers;
 
 import java.util.List;
 
+import org.checkerframework.checker.units.qual.s;
+
 import fr.imta.smartgrid.model.DataPoint;
 import fr.imta.smartgrid.model.Measurement;
 import fr.imta.smartgrid.model.Sensor;
 import fr.imta.smartgrid.model.WindTurbine;
+import fr.imta.smartgrid.model.SolarPanel;
+
+
+
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 import jakarta.persistence.EntityManager;
@@ -108,6 +114,110 @@ public class IngressHandler {
            .end("\"Invalid JSON payload\"");
     }
         }
+
+
+
+
+
+
+
+
+
+
+
+    public void Receivesolarpanelmeasurement(RoutingContext ctx) {
+            try {
+        
+        String played = ctx.body().asString();
+        String[] parts = played.split(":");
+
+        int PanelId = Integer.parseInt(parts[0]);
+        double temperature = Double.parseDouble(parts[1]);
+        double power = Double.parseDouble(parts[2]);
+        long timestamp = Long.parseLong(parts[3]);
+        
+        SolarPanel solarPanel = db.find(SolarPanel.class, PanelId);
+        if (solarPanel == null) {
+            ctx.response().setStatusCode(404)
+               .putHeader("content-type", "application/json")
+               .end("\"Solar panel not found\"");
+            return;
+        }
+
+        Measurement powerMeas = null;
+        Measurement speedMeas = null;
+        Measurement energyMeas = null;
+
+
+        for (Measurement m : solarPanel.getMeasurements()) {
+            if (m.getName().equals("power")) powerMeas = m;
+            if (m.getName().equals("temperature")) speedMeas = m;
+            if (m.getName().equals("total_energy_produced")) energyMeas = m;
+        }
+
+        db.getTransaction().begin();
+
+        
+        if (powerMeas != null) {
+            DataPoint dpPower = new DataPoint();
+            dpPower.setMeasurement(powerMeas);
+            dpPower.setTimestamp(timestamp);
+            dpPower.setValue(power);
+            db.persist(dpPower); 
+        }
+
+        if (speedMeas != null) {
+            DataPoint dpSpeed = new DataPoint();
+            dpSpeed.setMeasurement(speedMeas);
+            dpSpeed.setTimestamp(timestamp);
+            db.persist(dpSpeed);
+        }
+
+        if (energyMeas != null) {
+            double currentTotalEnergy = 0.0;
+            
+            try {
+                Double lastValue = (Double) db.createNativeQuery(
+                        "SELECT d.value FROM datapoint d WHERE d.measurement = ? ORDER BY d.timestamp DESC LIMIT 1")
+                        .setParameter(1, energyMeas.getId())
+                        .getSingleResult();
+                if (lastValue != null) {
+                    currentTotalEnergy = lastValue;
+                }
+            } catch (Exception noResult) {
+                
+                currentTotalEnergy = 0.0;
+            }
+
+            double addedEnergy = power * 60.0;
+            double newTotalEnergy = currentTotalEnergy + addedEnergy;
+        
+            DataPoint dpEnergy = new DataPoint();
+            dpEnergy.setMeasurement(energyMeas);
+            dpEnergy.setTimestamp(timestamp);
+            dpEnergy.setValue(newTotalEnergy);
+            db.persist(dpEnergy);
+        }
+
+        db.getTransaction().commit();
+
+        
+        ctx.response()
+            .setStatusCode(200)
+            .putHeader("content-type", "application/json")
+            .end("{\"status\":\"success\"}");
+
+    } catch (Exception e) {
+        if (db.getTransaction().isActive()) {
+            db.getTransaction().rollback();
+        }
+        ctx.response().setStatusCode(500)
+           .putHeader("content-type", "application/json")
+           .end("\"Invalid JSON payload\"");
+    }
+        }
+
+
 
     }
 

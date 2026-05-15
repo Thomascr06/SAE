@@ -72,6 +72,7 @@ public class VertxServer {
 
         IngressHandler ih = new IngressHandler(db);
         router.post("/ingress/windturbine").handler(ih::Receivewindturbinemeasurement);
+        router.post("/ingress/solarpanel").handler(ih::Receivesolarpanelmeasurement);
 
         // do the same for other routes
         // ...
