@@ -71,6 +71,8 @@ public class VertxServer {
 
         SensorHandler sh = new SensorHandler(db);
         router.get("/sensors/:kind").handler(sh::getSensorByKind);
+        router.get("/sensor/:id").handler(sh::getSensorDetail);
+        
 
         IngressHandler ih = new IngressHandler(db);
         router.post("/ingress/windturbine").handler(ih::Receivewindturbinemeasurement);
