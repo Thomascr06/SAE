@@ -3,6 +3,7 @@ package fr.imta.smartgrid.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -28,6 +29,8 @@ public abstract class Sensor {
 
     private String description;
 
+    private String dtype;
+
     @ManyToOne
     @JoinColumn(name = "grid")
     private Grid grid;
@@ -43,6 +46,24 @@ public abstract class Sensor {
         res.put("id", this.id);
         res.put("name", this.name);
         res.put("description", this.description);
+        res.put("kind ",this.dtype);
+            // Grid
+    if (this.grid != null) {
+        res.put("grid", this.grid.getId());
+    }
+
+    JsonArray ownersArray = new JsonArray();
+    for (Person owner : this.owners) {
+        ownersArray.add(owner.getId());
+    }
+    res.put("owners", ownersArray);
+
+    JsonArray measurementsArray = new JsonArray();
+    for (Measurement measurement : this.measurements) {
+        measurementsArray.add(measurement.getId());
+    }
+    res.put("available_measurements",measurementsArray);
+
         return res;
     }
 

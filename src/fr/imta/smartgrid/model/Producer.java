@@ -20,6 +20,11 @@ public abstract class Producer extends Sensor {
     public void setPowerSource(String powerSource) {
         this.powerSource = powerSource;
     }
+    public JsonObject toJSON() {
+        JsonObject res = super.toJSON();
+        res.put("power_source", this.powerSource);
+        return res;
+    }
 
 
 }

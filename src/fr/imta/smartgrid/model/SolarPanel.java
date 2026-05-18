@@ -18,6 +18,11 @@ public class SolarPanel extends Producer {
     public void setEfficiency(float efficiency) {
         this.efficiency = efficiency;
     }
-
+    @Override
+    public JsonObject toJSON(){
+        JsonObject res = super.toJSON();
+        res.put("efficiency ", this.efficiency);
+        return res;
+    }
 
 }

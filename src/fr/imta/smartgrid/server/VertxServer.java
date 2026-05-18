@@ -7,9 +7,11 @@ import org.eclipse.persistence.logging.SessionLog;
 import fr.imta.smartgrid.server.handlers.GridHandler;
 import fr.imta.smartgrid.server.handlers.PersonHandler;
 import fr.imta.smartgrid.server.handlers.MeasurementHandler;
+import fr.imta.smartgrid.server.handlers.ProducerHandler;
 import fr.imta.smartgrid.model.Person;
 import fr.imta.smartgrid.model.Grid;
 import fr.imta.smartgrid.model.Sensor;
+import fr.imta.smartgrid.model.Producer;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.Router;
@@ -63,6 +65,8 @@ public class VertxServer {
 
         // do the same for other routes
         // ...
+        ProducerHandler proh = new ProducerHandler(db);
+        router.get("/producers").handler(proh::getProducer);
 
         // start the server
         vertx.createHttpServer().requestHandler(router).listen(8080)
