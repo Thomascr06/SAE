@@ -39,4 +39,6 @@ Achille LEGRAND, Thomas CROIZYEUKS, Paul ROSSIGNOL
 - [ ] **GET /measurement/{id}/values**: Get measurement values
 
 ### Hard
+- [ ] **GET /grid/{id}/production**: Get grid total production
 - [ ] **GET /grid/{id}/consumption**: Get grid total consumption
+
