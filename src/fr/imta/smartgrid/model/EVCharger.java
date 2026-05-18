@@ -40,5 +40,12 @@ public class EVCharger extends Consumer {
         this.type = type;
     }
 
-
+    @Override
+    public JsonObject toJSON() {
+        JsonObject res = super.toJSON();
+        res.put("type", this.type);
+        res.put("maxAmp", this.maxAmp);
+        res.put("voltage", this.voltage);
+        return res;
+    }
 }

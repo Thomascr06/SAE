@@ -20,6 +20,12 @@ public abstract class Consumer extends Sensor {
     public void setMaxPower(Double maxPower) {
         this.maxPower = maxPower;
     }
-    
+
+    @Override
+    public JsonObject toJSON() {
+        JsonObject res = super.toJSON();
+        res.put("max_power", this.maxPower);
+        return res;
+    }
 }
 
