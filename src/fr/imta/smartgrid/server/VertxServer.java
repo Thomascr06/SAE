@@ -49,7 +49,8 @@ public class VertxServer {
         // add handlers for payload parsing and to allow swagger to send requests
         router.route().handler(BodyHandler.create());
         router.route().handler(
-                CorsHandler.create().addOrigin("*").allowedMethod(HttpMethod.DELETE).allowedMethod(HttpMethod.PUT).allowedMethod(HttpMethod.POST));
+                CorsHandler.create().addOrigin("*").allowedMethod(HttpMethod.DELETE).allowedMethod(HttpMethod.PUT)
+                        .allowedMethod(HttpMethod.POST));
 
         // create handlers and registers routes
         GridHandler gh = new GridHandler(db);
@@ -73,7 +74,7 @@ public class VertxServer {
         SensorHandler sh = new SensorHandler(db);
         router.get("/sensors/:kind").handler(sh::getSensorByKind);
         router.get("/sensor/:id").handler(sh::getSensorDetail);
-        
+        router.post("/sensor/:id").handler(sh::updateSensor);
 
         IngressHandler ih = new IngressHandler(db);
         router.post("/ingress/windturbine").handler(ih::Receivewindturbinemeasurement);
