@@ -70,6 +70,7 @@ public class VertxServer {
         MeasurementHandler mh = new MeasurementHandler(db);
         router.get("/measurements").handler(mh::getMeasurements);
         router.get("/measurement/:id").handler(mh::getMeasurementById);
+        router.get("/measurement/:id/values").handler(mh::getMeasurementValues);
 
         SensorHandler sh = new SensorHandler(db);
         router.get("/sensors/:kind").handler(sh::getSensorByKind);
