@@ -9,8 +9,9 @@ import fr.imta.smartgrid.server.handlers.SensorHandler;
 import fr.imta.smartgrid.server.handlers.PersonHandler;
 import fr.imta.smartgrid.server.handlers.MeasurementHandler;
 import fr.imta.smartgrid.server.handlers.IngressHandler;
-
 import fr.imta.smartgrid.server.handlers.ProducerHandler;
+import fr.imta.smartgrid.server.handlers.ConsumerHandler;
+
 import fr.imta.smartgrid.model.Person;
 import fr.imta.smartgrid.model.Grid;
 import fr.imta.smartgrid.model.Sensor;
@@ -82,6 +83,9 @@ public class VertxServer {
         // ...
         ProducerHandler proh = new ProducerHandler(db);
         router.get("/producers").handler(proh::getProducer);
+
+        ConsumerHandler conh = new ConsumerHandler(db);
+        router.get("/consumers").handler(conh::getConsumer);
 
         // start the server
         vertx.createHttpServer().requestHandler(router).listen(8080)
